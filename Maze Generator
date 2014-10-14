@@ -1,0 +1,548 @@
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+//This maze is generated and solved assuming that the generator and solver/user is always facing down and just steps the directions, but does not turn
+public class Adventure extends JFrame implements ActionListener
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	//Class level variables
+	static final int left = 0;
+	static final int forward = 1;
+	static final int right = 2;
+	static final int backward = 3;
+	static final int mazeSize = 10;
+	int[][] maze = new int[mazeSize][mazeSize];		//All elements in 2D array are initialized to zero
+	Random randGenerator = new Random();
+	int startLocation = ((mazeSize-1) / 2) + randGenerator.nextInt(2);
+	Location currPlayerLocation = new Location(1, startLocation);
+	int endLocationRow;
+	int endLocationColumn;
+	
+	//GUI class level variables
+	Container mainPanel;
+	JButton btnForward;
+	JButton btnBackward;
+	JButton btnRight;
+	JButton btnLeft;
+	JLabel lblDisplayText;
+	
+	public static void main(String[] args)
+	{
+		new Adventure();
+	}//End main
+	
+	public Adventure()
+	{
+		//super("Adventure Maze");
+		generateMaze();
+		setupGUI();
+	}//End Adventure constructor
+	
+	public void setupGUI()
+	{
+		//Setup the GUI
+		//Setup the buttons
+		lblDisplayText = new JLabel("<HTML>Welcome to the Adventure Maze.<BR>"
+				+ "It is a first person maze crawler.<BR>"
+				+ "I hope you enjoy it!<HTML>");
+		//lblDisplayText.setHorizontalTextPosition(100);
+		btnForward = new JButton("Forward");
+		btnBackward = new JButton("Backward");
+		btnRight = new JButton("Right");
+		btnLeft = new JButton("Left");
+		
+		//Setup container and layout
+		mainPanel = this.getContentPane();
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(lblDisplayText, BorderLayout.CENTER);
+		mainPanel.add(btnForward, BorderLayout.NORTH);
+		mainPanel.add(btnBackward, BorderLayout.SOUTH);
+		mainPanel.add(btnRight, BorderLayout.EAST);
+		mainPanel.add(btnLeft, BorderLayout.WEST);
+
+		updateGUI();
+		this.setSize(600, 400);
+		this.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//Setup ActionListeners
+		btnForward.addActionListener(this);
+		btnBackward.addActionListener(this);
+		btnRight.addActionListener(this);
+		btnLeft.addActionListener(this);
+	}//End setupGUI method
+	
+	public void actionPerformed(ActionEvent e)
+	{
+		System.out.println(e.getActionCommand());
+		//Check button clicks
+		if(e.getSource() == btnForward)
+		{
+			currPlayerLocation.setRow(currPlayerLocation.getRow()+1);
+			//Check for the end
+			if(currPlayerLocation.getRow() == endLocationRow && currPlayerLocation.getColumn() == endLocationColumn)
+			{
+				lblDisplayText.setText("Congratulations! You made it out alive!");
+				btnForward.setVisible(false);
+				btnBackward.setVisible(false);
+				btnRight.setVisible(false);
+				btnLeft.setVisible(false);
+			}//End if to check for end
+			else
+			{
+				updateGUI();
+			}//End else to update the GUI
+		}//End if btnForward
+		else if(e.getSource() == btnBackward)
+		{
+			currPlayerLocation.setRow(currPlayerLocation.getRow()-1);
+			//Check for the end
+			if(currPlayerLocation.getRow() == endLocationRow && currPlayerLocation.getColumn() == endLocationColumn)
+			{
+				lblDisplayText.setText("Congratulations! You made it out alive!");
+				btnForward.setVisible(false);
+				btnBackward.setVisible(false);
+				btnRight.setVisible(false);
+				btnLeft.setVisible(false);
+			}//End if to check for end
+			else
+			{
+				updateGUI();
+			}//End else to update the GUI
+		}//End else if btnBackward
+		else if(e.getSource() == btnRight)
+		{
+			currPlayerLocation.setColumn(currPlayerLocation.getColumn()-1);
+			//Check for the end
+			if(currPlayerLocation.getRow() == endLocationRow && currPlayerLocation.getColumn() == endLocationColumn)
+			{
+				lblDisplayText.setText("Congratulations! You made it out alive!");
+				btnForward.setVisible(false);
+				btnBackward.setVisible(false);
+				btnRight.setVisible(false);
+				btnLeft.setVisible(false);
+			}//End if check for end
+			else
+			{
+				updateGUI();
+			}//End else to update the GUI
+		}//End else if btnRight
+		else if(e.getSource() == btnLeft)
+		{
+			currPlayerLocation.setColumn(currPlayerLocation.getColumn()+1);
+			//Check for the end
+			if(currPlayerLocation.getRow() == endLocationRow && currPlayerLocation.getColumn() == endLocationColumn)
+			{
+				lblDisplayText.setText("Congratulations! You made it out alive!");
+				btnForward.setVisible(false);
+				btnBackward.setVisible(false);
+				btnRight.setVisible(false);
+				btnLeft.setVisible(false);
+			}//End if to check for end
+			else
+			{
+				updateGUI();
+			}//End else to update the GUI
+		}//End else if btnLeft
+	}//End actionPerformed method
+	
+	public void updateGUI()
+	{
+		//Update the GUI buttons
+		try
+		{
+			//Check forward
+			if(maze[currPlayerLocation.getRow()+1][currPlayerLocation.getColumn()] == 0 || maze[currPlayerLocation.getRow()+1][currPlayerLocation.getColumn()] == 2)
+			{
+				btnForward.setVisible(false);
+			}//End if forward
+			else
+			{
+				btnForward.setVisible(true);
+			}//End else forward
+			
+			//Check backward
+			if(maze[currPlayerLocation.getRow()-1][currPlayerLocation.getColumn()] == 0 || maze[currPlayerLocation.getRow()-1][currPlayerLocation.getColumn()] == 2)
+			{
+				btnBackward.setVisible(false);
+			}//End if backward
+			else
+			{
+				btnBackward.setVisible(true);
+			}//End else backward
+			
+			//Check right
+			if(maze[currPlayerLocation.getRow()][currPlayerLocation.getColumn()-1] == 0 || maze[currPlayerLocation.getRow()][currPlayerLocation.getColumn()-1] == 2)
+			{
+				btnRight.setVisible(false);
+			}//End if right
+			else
+			{
+				btnRight.setVisible(true);
+			}//End else right
+			
+			//Check left
+			if(maze[currPlayerLocation.getRow()][currPlayerLocation.getColumn()+1] == 0 || maze[currPlayerLocation.getRow()][currPlayerLocation.getColumn()+1] == 2)
+			{
+				btnLeft.setVisible(false);
+			}//End if left
+			else
+			{
+				btnLeft.setVisible(true);
+			}//End else left
+		}//End try
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+			System.out.println(e.getMessage());
+		}//End catch
+	}//End updateGUI method
+	
+	public void generateMaze()
+	{
+		//Limit movement options for generation
+		//Iteration to test cases until all options are eliminated
+		//Use stack for spiral maze case
+		//Randomly generates a path from beginning to end
+		//Declare and initialize/instantiate local variables
+		boolean keepgoing1 = true;
+		boolean keepgoing2 = true;
+		boolean leftChecked = false;
+		boolean forwardChecked = false;
+		boolean rightChecked = false;
+		boolean backwardChecked = false;
+		int randomDirection = 0;
+		int previousPath = backward;
+		Stack<Integer> path = new Stack<Integer>();
+		
+		//Generate the outer walls
+		for(int i = 0; i < mazeSize; i++)
+		{
+			for(int j = 0; j < mazeSize; j++)
+			{
+				if(i == 0 || i == (mazeSize-1) || j == 0 || j == (mazeSize-1))
+				{
+					maze[i][j] = 2;
+				}//End if
+			}//End j for loop
+		}//End i for loop
+		
+		//Start near the middle
+		Location currLocation = new Location(0, startLocation);
+		maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+		
+		//Go forward first to get into the maze
+		currLocation.setRow(currLocation.getRow()+1);
+		maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+		
+		//While loop to randomly generate the maze until at the last row
+		while(keepgoing1)
+		{
+			keepgoing2 = true;
+			leftChecked = false;
+			forwardChecked = false;
+			rightChecked = false;
+			backwardChecked = false;
+			
+			//While loop to store random number in randomDirection
+			while(keepgoing2)
+			{
+				//Check if direction has already been tried
+				if(leftChecked == true && forwardChecked == true && rightChecked == true && backwardChecked == true)
+				{
+					//Check the outside edges to find a path to create an exit
+					for(int i = 0; i < mazeSize; i++)
+					{
+						//Check bottom edge
+						if(maze[mazeSize-2][i] == 1)
+						{
+							maze[mazeSize-1][i] = 1;
+							endLocationRow = mazeSize-1;
+							endLocationColumn = i;
+							i = mazeSize;
+						}//End if bottom
+						
+						//Check left edge
+						else if(maze[i][mazeSize-2] == 1)
+						{
+							maze[i][mazeSize-1] = 1;
+							endLocationRow = i;
+							endLocationColumn = mazeSize-1;
+							i = mazeSize;
+						}//End else if left
+						
+						//Check right edge
+						else if(maze[i][1] == 1)
+						{
+							maze[i][0] = 1;
+							endLocationRow = i;
+							endLocationColumn = 0;
+							i = mazeSize;
+						}//End else if right
+						
+						//Check top edge
+						else if(maze[1][i] == 1 && (i != (mazeSize-1)/2 || i != mazeSize/2))
+						{
+							maze[0][i] = 1;
+							endLocationRow = 0;
+							endLocationColumn = i;
+							i = mazeSize;
+						}//End if top edge
+					}//End check edges for loop
+					keepgoing1 = false;
+					keepgoing2 = false;
+				}//End if all directions checked
+				
+				randomDirection = randGenerator.nextInt(4);
+				//Determine if direction is possible
+				//Regenerate random if necessary
+				if(randomDirection != previousPath)
+				{
+					//Check if not at edge of maze
+					if(currLocation.getRow() != 0 && currLocation.getColumn() != 0 && currLocation.getColumn() != (mazeSize-1))
+					{
+						if(randomDirection == left)
+						{
+							//Check if not already a path
+							if(maze[currLocation.getRow()][currLocation.getColumn()+1] == 0)
+							{
+								currLocation.setColumn(currLocation.getColumn()+1);
+								maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+								//Store row then column on a stack
+								path.push(currLocation.getRow());
+								path.push(currLocation.getColumn());
+								previousPath = right;
+								keepgoing2 = false;
+							}//End if not already a path
+							
+							else
+							{
+								leftChecked = true;
+							}//End else
+						}//End if left
+						
+						else if(randomDirection == forward)
+						{
+							//Check if not already a path
+							if(maze[currLocation.getRow()+1][currLocation.getColumn()] == 0)
+							{
+								currLocation.setRow(currLocation.getRow()+1);
+								maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+								path.push(currLocation.getRow());
+								path.push(currLocation.getColumn());
+								previousPath = backward;
+								keepgoing2 = false;
+							}//End if not already a path
+							
+							//Check for the end of the maze
+
+							else if(maze[currLocation.getRow()+1][currLocation.getColumn()] == 2)
+							{
+								currLocation.setRow(currLocation.getRow()+1);
+								maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+								path.push(currLocation.getRow());
+								path.push(currLocation.getColumn());
+								endLocationRow = currLocation.getRow();
+								endLocationColumn = currLocation.getColumn();
+								previousPath = backward;
+								keepgoing2 = false;
+								keepgoing1 = false;
+								continue;
+							}//End if
+							
+							else
+							{
+								forwardChecked = true;
+							}//End else
+						}//End if forward
+						
+						else if(randomDirection == right)
+						{
+							//Check if not already a path
+							if(maze[currLocation.getRow()][currLocation.getColumn()-1] == 0)
+							{
+								currLocation.setColumn(currLocation.getColumn()-1);
+								maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+								path.push(currLocation.getRow());
+								path.push(currLocation.getColumn());
+								previousPath = left;
+								keepgoing2 = false;
+							}//End if not already a path
+						
+							else
+							{
+								rightChecked = true;
+							}//End else
+						}//End if right
+						
+						else if(randomDirection == backward)
+						{
+							//Check if not already a path
+							if(maze[currLocation.getRow()-1][currLocation.getColumn()] == 0)
+							{
+								currLocation.setRow(currLocation.getRow()-1);
+								maze[currLocation.getRow()][currLocation.getColumn()] = 1;
+								path.push(currLocation.getRow());
+								path.push(currLocation.getColumn());
+								previousPath = forward;
+								keepgoing2 = false;
+							}//End if not already a path
+						
+							else
+							{
+								backwardChecked = true;
+							}//End else
+						}//End if backward
+					}//End if to check for edge of maze
+					
+					//Check to see if at the last row
+					for(int i = 0; i < mazeSize; i++)
+					{
+						if(maze[mazeSize-1][i] == 1)
+						{
+							endLocationRow = mazeSize-1;
+							endLocationColumn = i;
+							System.out.println(endLocationRow);
+							System.out.println(endLocationColumn);
+							keepgoing2 = false;
+							keepgoing1 = false;
+						}//End if statement
+					}//End i for loop
+					
+					//Check for spiral and edge of maze, then go back through path
+					if(maze[currLocation.getRow()][currLocation.getColumn()+1] > 0 && 
+							maze[currLocation.getRow()+1][currLocation.getColumn()] > 0 && 
+							maze[currLocation.getRow()][currLocation.getColumn()-1] > 0 && 
+							maze[currLocation.getRow()-1][currLocation.getColumn()] > 0)
+					{
+						if(path.empty())
+						{
+							//Check the outside edges to find a path to create an exit
+							for(int i = 0; i < mazeSize; i++)
+							{
+								//Check bottom edge
+								if(maze[mazeSize-2][i] == 1)
+								{
+									maze[mazeSize-1][i] = 1;
+									endLocationRow = mazeSize - 1;
+									endLocationColumn = i;
+									i = mazeSize;
+								}//End if bottom
+								
+								//Check left edge
+								else if(maze[i][mazeSize-2] == 1)
+								{
+									maze[i][mazeSize-1] = 1;
+									endLocationRow = i;
+									endLocationColumn = mazeSize - 1;
+									i = mazeSize;
+								}//End else if left
+								
+								//Check right edge
+								else if(maze[i][1] == 1)
+								{
+									maze[i][0] = 1;
+									endLocationRow = i;
+									endLocationColumn = 0;
+									i = mazeSize;
+								}//End else if right
+								
+								//Check top edge
+								else if(maze[1][i] == 1 && (i != (mazeSize-1)/2 || i != mazeSize/2))
+								{
+									maze[0][i] = 1;
+									endLocationRow = 0;
+									endLocationColumn = i;
+									i = mazeSize;
+								}//End if top edge
+							}//End check edges for loop
+							keepgoing1 = false;
+							keepgoing2 = false;
+						}//End if path is empty
+						
+						else
+						{
+							currLocation.setColumn(path.pop());
+							currLocation.setRow(path.pop());
+						}//End else
+					}//End if to check for spiral
+				}//End if previousPath
+				
+				else
+				{
+					if(previousPath == left)
+					{
+						leftChecked = true;
+					}//End leftChecked
+					if(previousPath == forward)
+					{
+						forwardChecked = true;
+					}//End forwardChecked
+					if(previousPath == right)
+					{
+						rightChecked = true;
+					}//End rightChecked
+					if(previousPath == backward)
+					{
+						backwardChecked = true;
+					}//End backwardChecked
+				}//End else
+			}//End while keepgoing2 loop
+		}//End while keepgoing1 loop
+		//Test maze generation
+		
+		for(int k = 0; k < mazeSize; k++)
+		{
+			for(int l = 0; l < mazeSize; l++)
+			{
+				System.out.print(maze[k][l]);
+			}
+			System.out.print("\n");
+		}
+		
+	}//End generateRealPath method
+}//End Adventure class
+
+class Location
+{
+	private int row;
+	private int column;
+	
+	public Location()
+	{
+		row = 0;
+		column = 0;
+	}//End null parameter constructor
+	
+	public Location(int row, int column)
+	{
+		this.row = row;
+		this.column = column;
+	}//End parameter constructor
+	
+	public int getRow()
+	{
+		return this.row;
+	}//End getRow method
+	
+	public void setRow(int row)
+	{
+		this.row = row;
+	}//End setRow method
+	
+	public int getColumn()
+	{
+		return this.column;
+	}//End getColumn method
+	
+	public void setColumn(int column)
+	{
+		this.column = column;
+	}//End setColumn method
+}//End Location class
+	
