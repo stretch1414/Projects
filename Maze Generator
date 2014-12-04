@@ -295,52 +295,6 @@ public class Adventure extends JFrame implements ActionListener
 			//While loop to store random number in randomDirection
 			while(keepgoing2)
 			{
-				//Check if direction has already been tried
-				if(leftChecked == true && forwardChecked == true && rightChecked == true && backwardChecked == true)
-				{
-					//Check the outside edges to find a path to create an exit
-					for(int i = 0; i < mazeSize; i++)
-					{
-						//Check bottom edge
-						if(maze[mazeSize-2][i] == 1)
-						{
-							maze[mazeSize-1][i] = 1;
-							endLocationRow = mazeSize-1;
-							endLocationColumn = i;
-							i = mazeSize;
-						}//End if bottom
-						
-						//Check left edge
-						else if(maze[mazeSize-1-i][mazeSize-2] == 1)
-						{
-							maze[mazeSize-1-i][mazeSize-1] = 1;
-							endLocationRow = i;
-							endLocationColumn = mazeSize-1;
-							i = mazeSize;
-						}//End else if left
-						
-						//Check right edge
-						else if(maze[mazeSize-1-i][1] == 1)
-						{
-							maze[mazeSize-1-i][0] = 1;
-							endLocationRow = i;
-							endLocationColumn = 0;
-							i = mazeSize;
-						}//End else if right
-						
-						//Check top edge
-						else if(maze[1][i] == 1 && (i != (mazeSize-1)/2 || i != mazeSize/2))
-						{
-							maze[0][i] = 1;
-							endLocationRow = 0;
-							endLocationColumn = i;
-							i = mazeSize;
-						}//End if top edge
-					}//End check edges for loop
-					keepgoing1 = false;
-					keepgoing2 = false;
-				}//End if all directions checked
-				
 				randomDirection = randGenerator.nextInt(4);
 				//Determine if direction is possible
 				//Regenerate random if necessary
